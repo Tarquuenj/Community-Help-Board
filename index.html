@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Help Board</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <?php
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *'); // Allows all origins to access this API
+header('Access-Control-Allow-Methods: GET, POST'); // Allows GET and POST methods
+$file = 'tasks.json';
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    if (file_exists($file)) {
+        $tasks = file_get_contents($file);
+        echo $tasks;
+    } else {
+        echo json_encode([]);
+    }
+    exit;
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $input = file_get_contents('php://input');
+    $newTask = json_decode($input, true);
+
+    if (file_exists($file)) {
+        $tasks = json_decode(file_get_contents($file), true);
+    } else {
+        $tasks = [];
+    }
+
+    $tasks[] = $newTask;
+    file_put_contents($file, json_encode($tasks));
+
+    echo json_encode($newTask);
+    exit;
+}
+
+http_response_code(405);
+echo json_encode(["message" => "Method Not Allowed"]);
+
+
+    <header>
+        <h1>Community Help Board</h1>
+    </header>
+    <main>
+        <section id="task-form">
+            <h2>Post a Task</h2>
+            <form id="new-task-form">
+                <label for="task-title">Task Title:</label>
+                <input type="text" id="task-title" required>
+                <label for="task-desc">Description:</label>
+                <textarea id="task-desc" required></textarea>
+                <label for="task-deadline">Deadline:</label>
+                <input type="date" id="task-deadline" required>
+                <button type="submit">Post Task</button>
+            </form>
+        </section>
+        <section id="task-list">
+            <h2>Available Tasks</h2>
+            <ul id="tasks"></ul>
+        </section>
+    </main>
+    <script src="scripts.js"></script>
+</body>
+</html>
