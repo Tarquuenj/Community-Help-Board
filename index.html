@@ -7,41 +7,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <?php
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *'); // Allows all origins to access this API
-header('Access-Control-Allow-Methods: GET, POST'); // Allows GET and POST methods
-$file = 'tasks.json';
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    if (file_exists($file)) {
-        $tasks = file_get_contents($file);
-        echo $tasks;
-    } else {
-        echo json_encode([]);
-    }
-    exit;
-}
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $input = file_get_contents('php://input');
-    $newTask = json_decode($input, true);
-
-    if (file_exists($file)) {
-        $tasks = json_decode(file_get_contents($file), true);
-    } else {
-        $tasks = [];
-    }
-
-    $tasks[] = $newTask;
-    file_put_contents($file, json_encode($tasks));
-
-    echo json_encode($newTask);
-    exit;
-}
-
-http_response_code(405);
-echo json_encode(["message" => "Method Not Allowed"]);
-
-
     <header>
         <h1>Community Help Board</h1>
     </header>
@@ -63,6 +28,5 @@ echo json_encode(["message" => "Method Not Allowed"]);
             <ul id="tasks"></ul>
         </section>
     </main>
-    <script src="scripts.js"></script>
 </body>
 </html>
